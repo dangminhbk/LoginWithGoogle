@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta name="google-signin-client_id" content="Your GG App Id( Skype me)">
+    <title>Index</title>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+<body>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <script>
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            console.log('ID: ' + profile.getId());
+            console.log('Name: ' + profile.getName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail());
+            var token = googleUser.getAuthResponse().id_token;
+            
+            fetch(`http://localhost:21022/api/TokenAuth/GoogleAuthenticate`, {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                redirect: 'follow', 
+                referrer: 'no-referrer', 
+                body: JSON.stringify({
+                    secretCode: "RatLaBiMat",
+                    googleToken: token
+                })
+            }).then(data => data.json())
+                .then(result => console.log(result))
+                .catch(err => console.log(err))
+        }
+    </script>
+    <a href="#" onclick="signOut();">Sign out</a>
+    <script>
+        function signOut() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+                console.log('User signed out.');
+            });
+        }
+    </script>
+</body>
+</html>
